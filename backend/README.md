@@ -23,12 +23,133 @@
 
 ## Description
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+`transcendence` のバックエンドAPIです。NestJS、Prisma ORM、PostgreSQLを使用します。
+
+## Requirements
+
+- Node.js `20.19.5`
+- PostgreSQL `16`
+- npm
 
 ## Project setup
 
 ```bash
-$ npm install
+# リポジトリルートでNode.jsのバージョンを確認
+node --version
+# v20.19.5
+
+# backendへ移動
+cd backend
+
+# 環境変数を用意
+cp .env.example .env
+
+# 依存関係をインストール
+npm install
+```
+
+`.env` の `DATABASE_URL` は、起動するPostgreSQLのユーザー名、パスワード、データベース名と一致させてください。
+
+```dotenv
+DATABASE_URL=postgresql://USER:PASSWORD@localhost:5432/DATABASE?schema=public
+```
+
+## PostgreSQL
+
+PostgreSQL 16はリポジトリルートの `docker-compose.yml` で管理します。
+
+```bash
+# backendディレクトリから起動
+docker compose -f ../docker-compose.yml up -d postgres
+
+# 起動状態を確認
+docker compose -f ../docker-compose.yml ps postgres
+
+# 停止
+docker compose -f ../docker-compose.yml stop postgres
+```
+
+## Prisma
+
+Prisma CLIとPrisma Clientは、ともに `7.10.0` に固定しています。
+
+主なファイルは次のとおりです。
+
+- `prisma/schema.prisma`: モデルとリレーションの定義
+- `prisma/migrations/`: データベースの変更履歴
+- `prisma.config.ts`: スキーマ、マイグレーション、接続URLの設定
+- `generated/prisma/`: 自動生成されるPrisma Client（Git管理対象外）
+
+### Prisma Clientを生成する
+
+`schema.prisma` を変更した場合や、依存関係をインストールした直後に実行します。
+
+```bash
+npx prisma generate
+```
+
+### 開発環境へマイグレーションを適用する
+
+モデルを変更したら、変更内容を表す名前を付けてマイグレーションを作成・適用します。
+
+```bash
+npx prisma migrate dev --name add_example_field
+```
+
+既に作成済みのマイグレーションだけを適用する場合は、次を実行します。
+
+```bash
+npx prisma migrate deploy
+```
+
+現在のマイグレーション状態は次のコマンドで確認できます。
+
+```bash
+npx prisma migrate status
+```
+
+### 既存データベースからスキーマを取得する
+
+PostgreSQL側に既存のテーブルがあり、その構造を `schema.prisma` に反映したい場合に使用します。
+
+```bash
+npx prisma db pull
+npx prisma generate
+```
+
+> `prisma db pull` はデータベースの構造を基準に `schema.prisma` を更新します。手動で記述したモデルや属性がある場合は、実行前に差分をコミットするなどして退避してください。
+
+### Prisma Studioでテーブルを確認する
+
+PostgreSQLを起動した状態で次を実行します。
+
+```bash
+npx prisma studio
+```
+
+通常はブラウザで `http://localhost:5555` が開き、`users`、`posts`、`friendships`、`refresh_tokens` テーブルの内容を確認・編集できます。Prisma Studioはデータを書き換えられるため、特に本番データベースへ接続する場合は注意してください。
+
+### スキーマを検証・整形する
+
+```bash
+npx prisma validate
+npx prisma format
+```
+
+### 基本的な開発手順
+
+```bash
+# 1. PostgreSQLを起動
+docker compose -f ../docker-compose.yml up -d postgres
+
+# 2. マイグレーションを適用
+npx prisma migrate deploy
+
+# 3. Prisma Clientを生成
+npx prisma generate
+
+# 4. バックエンドを起動
+npm run start:dev
 ```
 
 ## Compile and run the project
