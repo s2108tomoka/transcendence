@@ -96,42 +96,53 @@ Week 4
                          Internet
                             │
                             ▼
-                  ┌─────────────────┐
-                  │      Nginx      │
-                  │ + ModSecurity   │
-                  └────────┬────────┘
-                           │
-                           ▼
-                  ┌─────────────────┐
-                  │   API Gateway   │
-                  └────────┬────────┘
-                           │
-             ┌─────────────┼─────────────┐
-             │             │             │
-             ▼             ▼             ▼
-      User Service   Social Service  Battle Service
-             │             │             │
-             └─────────────┼─────────────┘
+                   ┌────────────────┐
+                   │      Nginx     │
+                   │  ModSecurity   │
+                   └───────┬────────┘
                            │
                            ▼
                     ┌─────────────┐
-                    │ PostgreSQL  │
-                    └─────────────┘
-
-                    ┌─────────────┐
-                    │    Redis    │
+                    │ API Gateway │
                     └──────┬──────┘
                            │
-              ┌────────────┴────────────┐
-              ▼                         ▼
-       Realtime Service          Analytics Service
-
-
-                    HashiCorp Vault
+          ┌────────────────┼────────────────┐
+          │                │                │
+          ▼                ▼                ▼
+    User Service     Social Service    Battle Service
+       NestJS            NestJS            NestJS
+       Docker            Docker            Docker
+          │                │                │
+          └────────────────┼────────────────┘
                            │
-                           ▼
-                Secrets / API Keys
+                     ┌─────┴─────┐
+                     ▼           ▼
+                PostgreSQL     Redis
+                     
+                     ▲
+                     │
+              Realtime Service
+                   NestJS
+                   Docker
+
+                     ▲
+                     │
+              Analytics Service
+                   NestJS
+                   Docker
+
+
+        ┌──────────────────────┐
+        │       Keycloak       │
+        │ OAuth 2.0 / OIDC     │
+        └──────────────────────┘
+
+        ┌──────────────────────┐
+        │    HashiCorp Vault   │
+        │       Secrets        │
+        └──────────────────────┘
 ```
+PostgreSQLは単一インスタンスを共有するが、各サービスのデータをPostgreSQL Schema単位で論理分離する。各サービスは自身のSchemaのみを直接操作し、他サービスのデータへのアクセスはサービス間APIまたはイベントを介して行う。
 
 ---
 
