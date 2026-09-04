@@ -1,3 +1,46 @@
+# MUST
+## General requirements
+- Webアプリケーションである場合、フロントエンド・バックエンド・データベースで構成されている。
+- Gitは変更内容を説明する、明確で意味のあるコミットメッセージを記述すること。
+- Gitにはチームメンバー全員によるコミットを含むこと。
+- チーム内での適切な作業分担を行うこと。
+- デプロイにはコンテナ化ソリューション（Docker、Podman、または同等のもの）を使用し、単一のコマンドで実行できるようにすること。
+- WebサイトはGoogle Chromeの最新安定版に対応していること。
+- ブラウザのコンソールに、JavaScriptコードに関する警告やエラーが表示されないこと。
+- ブラウザのコンソールに、JavaScriptコードに関する警告やエラーが表示されないこと。
+※プレイバシーポリシーとかマルチユーザー対応についてPDFに色々書いてるから確認したほうがいいかも
+>Privacy Policy and Terms of Service: These pages will be verified
+during evaluation. They must:
+• Be easily accessible from the application (e.g., footer links).
+• Contain relevant and appropriate content for your project.
+• Not be placeholder or empty pages.
+Missing or inadequate Privacy Policy/Terms of Service pages will
+result in project rejection.
+Multi-user Support (Mandatory): Your website must support multiple
+users simultaneously. This is a core requirement of the project.
+Users should be able to interact with the application at the same
+time without conflicts or performance issues. This includes:
+• Multiple users can be logged in and active at the same time.
+• Concurrent actions by different users are handled properly.
+• Real-time updates are reflected across all connected users when
+applicable.
+• No data corruption or race conditions occur with simultaneous
+user actions.
+
+## Technical requirements
+- クリアで応答性が高く、すべてのデバイスからアクセスできるフロントエンド。
+- 選択した CSS フレームワークまたはスタイリング ソリューションを使用します (例: Tailwind CSS、
+ブートストラップ、マテリアル UI、スタイル付きコンポーネントなど)。
+- API キー、環境変数などをローカルの .env ファイルに保存します。.envはgitignoreし、.env.exampleファイルを提供してください。
+- データベースには、明確なスキーマと明確に定義された関係が必要です。
+- アプリケーションには基本的なユーザー管理システムが必要です
+- ユーザーは安全にサインアップしてログインできます
+- 適切なセキュリティ（ハッシュ化されたパスワードやソルトなど）を備えた電子メールとパスワードの認証。
+- 追加の認証機能(OAuth、２要素認証など) をモジュール経由で実装できます
+- すべてのフォームとユーザー入力は、フロントエンドとバックエンドの両方で適切に検証される必要があります。
+- ブラウザ、スクリプト、外部 API などからのバックエンドへの接続には、HTTPS を使用する必要があります。バックエンド自体の内部の接続 (Web サーバーやデータベース、コンテナ内のソフトウェアなど) は暗号化なしで行うことができます
+
+# Modules
 ## +2 バックエンド、フロントエンド両方でのフレームワークの使用（Web）
 >Major: Use a framework for both the frontend and backend.
 ◦ Use a frontend framework (React, Vue, Angular, Svelte, etc.).
