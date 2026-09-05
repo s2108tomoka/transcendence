@@ -1,0 +1,72 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model friendships {
+  id                                    String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  requester_id                          String           @db.Uuid
+  addressee_id                          String           @db.Uuid
+  status                                FriendshipStatus
+  created_at                            DateTime         @default(now()) @db.Timestamptz(3)
+  updated_at                            DateTime         @db.Timestamptz(3)
+  users_friendships_addressee_idTousers users            @relation("friendships_addressee_idTousers", fields: [addressee_id], references: [id], onDelete: Cascade)
+  users_friendships_requester_idTousers users            @relation("friendships_requester_idTousers", fields: [requester_id], references: [id], onDelete: Cascade)
+
+  @@unique([requester_id, addressee_id])
+  @@index([addressee_id])
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model posts {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  author_id  String   @db.Uuid
+  content    String   @db.VarChar(20)
+  created_at DateTime @default(now()) @db.Timestamptz(3)
+  updated_at DateTime @db.Timestamptz(3)
+  users      users    @relation(fields: [author_id], references: [id], onDelete: Cascade)
+
+  @@index([author_id, created_at(sort: Desc)])
+}
+
+model refresh_tokens {
+  id         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id    String    @db.Uuid
+  token_hash String    @db.VarChar(255)
+  expires_at DateTime  @db.Timestamptz(3)
+  revoked_at DateTime? @db.Timestamptz(3)
+  created_at DateTime  @default(now()) @db.Timestamptz(3)
+  users      users     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@index([user_id])
+}
+
+model users {
+  id                                          String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  username                                    String           @unique @db.VarChar(32)
+  email                                       String           @unique @db.VarChar(255)
+  password_hash                               String           @db.VarChar(255)
+  display_name                                String           @db.VarChar(32)
+  bio                                         String?          @db.VarChar(160)
+  avatar_url                                  String?          @db.VarChar(512)
+  is_online                                   Boolean          @default(false)
+  last_seen_at                                DateTime?        @db.Timestamptz(3)
+  created_at                                  DateTime         @default(now()) @db.Timestamptz(3)
+  updated_at                                  DateTime         @db.Timestamptz(3)
+  friendships_friendships_addressee_idTousers friendships[]    @relation("friendships_addressee_idTousers")
+  friendships_friendships_requester_idTousers friendships[]    @relation("friendships_requester_idTousers")
+  posts                                       posts[]
+  refresh_tokens                              refresh_tokens[]
+}
+
+enum FriendshipStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+  BLOCKED
+}
