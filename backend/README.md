@@ -25,6 +25,46 @@
 
 `transcendence` のバックエンドAPIです。NestJS、Prisma ORM、PostgreSQLを使用します。
 
+## User registration API
+
+Nginx経由では `POST https://localhost/api/auth/register`、NestJSへ直接接続する開発・テスト時は `POST /auth/register` を使用します。
+
+```json
+{
+  "username": "alice_42",
+  "email": "alice@example.com",
+  "password": "correct horse battery staple",
+  "displayName": "Alice",
+  "bio": "Hello!"
+}
+```
+
+- `username`: 3〜32文字の小文字英数字またはアンダースコア
+- `email`: 255文字以内のメールアドレス
+- `password`: 12文字以上、UTF-8で72バイト以内
+- `displayName`: 任意、1〜32文字（省略時は`username`）
+- `bio`: 任意、160文字以内
+
+成功時は `201 Created` と、パスワード情報を除いたユーザーを返します。エラーはすべて次の形式で返します。
+
+```json
+{
+  "statusCode": 400,
+  "code": "VALIDATION_ERROR",
+  "message": "Request validation failed",
+  "details": [
+    {
+      "field": "email",
+      "messages": ["email must be an email"]
+    }
+  ],
+  "timestamp": "2026-09-04T00:00:00.000Z",
+  "path": "/auth/register"
+}
+```
+
+`details`は詳細情報がある場合だけ含まれます。クライアント側の分岐には、変更され得る`message`ではなく安定した`code`を使用してください。
+
 ## Requirements
 
 - Node.js `20.19.5`

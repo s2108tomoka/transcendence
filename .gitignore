@@ -16,6 +16,7 @@ frontend/.env.local
 frontend/.next/
 backend/dist/
 backend/generated/prisma/
+backend/src/generated/prisma/
 
 # TLS証明書
 nginx/certs/*.pem
